@@ -1,4 +1,4 @@
-const CACHE_NAME = 'stock-loja-v3';
+const CACHE_NAME = 'stock-loja-v4';
 const APP_FILES = ['./', './index.html', './styles.css', './sold-button.css', './platform-install.css', './app.js', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', event => {
