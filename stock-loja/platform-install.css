@@ -1,0 +1,72 @@
+.install-button {
+  height: 36px;
+  border: 1px solid #e6e9e1;
+  border-radius: 10px;
+  padding: 0 11px;
+  background: #fff;
+  color: #526c55;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font: 600 10px 'DM Sans', sans-serif;
+  cursor: pointer;
+}
+
+.install-button:hover {
+  background: #f0f4e9;
+  border-color: #d6e2cd;
+}
+
+.install-button svg {
+  width: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.install-button[hidden],
+#confirmInstall[hidden] {
+  display: none;
+}
+
+.install-dialog {
+  width: min(420px, calc(100% - 32px));
+  border: 0;
+  border-radius: 19px;
+  padding: 26px;
+  color: #24251f;
+  box-shadow: 0 20px 80px #18201538;
+}
+
+.install-dialog::backdrop {
+  background: #1e271c66;
+  backdrop-filter: blur(3px);
+}
+
+.install-dialog h2 {
+  margin: 0;
+  font: 750 21px Manrope, sans-serif;
+  letter-spacing: -.5px;
+}
+
+@media (max-width: 700px) {
+  .install-button {
+    width: 36px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .install-button span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
