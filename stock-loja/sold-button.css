@@ -1,0 +1,38 @@
+.table-head,
+.product-row {
+  grid-template-columns: minmax(200px, 1.7fr) minmax(140px, 1fr) minmax(125px, .8fr) 152px;
+}
+
+.row-actions {
+  align-items: center;
+}
+
+.sold-button {
+  height: 28px;
+  padding: 0 9px;
+  border: 1px solid #dce9cf;
+  border-radius: 8px;
+  background: #f1f6e9;
+  color: #527449;
+  font: 600 9px 'DM Sans', sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.sold-button:hover:not(:disabled) {
+  background: #e2edd5;
+  border-color: #cbdcba;
+}
+
+.sold-button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 700px) {
+  .sold-button {
+    height: 26px;
+    padding: 0 7px;
+    font-size: 8px;
+  }
+}
