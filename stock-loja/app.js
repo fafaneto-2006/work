@@ -62,7 +62,7 @@
         <div class="product-info"><span class="product-avatar" style="background:${bg};color:${fg}">${symbol}</span><div><strong>${escapeHTML(item.name)}</strong><small>Produto #${String(index + 1).padStart(3, '0')}</small></div></div>
         <div class="quantity-control"><button class="qty-btn" data-action="decrease" aria-label="Diminuir quantidade de ${escapeHTML(item.name)}">−</button><strong>${quantity.toLocaleString('pt')}</strong><button class="qty-btn" data-action="increase" aria-label="Aumentar quantidade de ${escapeHTML(item.name)}">＋</button></div>
         <span class="stock-tag ${stockClass}">${stockLabel}</span>
-        <div class="row-actions"><button class="row-action" data-action="edit" aria-label="Editar ${escapeHTML(item.name)}" title="Editar">✎</button><button class="row-action delete" data-action="delete" aria-label="Eliminar ${escapeHTML(item.name)}" title="Eliminar">⌫</button></div>
+        <div class="row-actions"><button class="sold-button" data-action="sell" aria-label="Registar uma unidade vendida ou retirada de ${escapeHTML(item.name)}" title="Retirar uma unidade do stock" ${quantity === 0 ? 'disabled' : ''}>Vendido</button><button class="row-action" data-action="edit" aria-label="Editar ${escapeHTML(item.name)}" title="Editar">✎</button><button class="row-action delete" data-action="delete" aria-label="Eliminar ${escapeHTML(item.name)}" title="Eliminar">⌫</button></div>
       </article>`;
     }).join('');
   }
@@ -123,6 +123,7 @@
     if (!product) return;
     if (button.dataset.action === 'increase') changeQuantity(product.id, 1);
     if (button.dataset.action === 'decrease') changeQuantity(product.id, -1);
+    if (button.dataset.action === 'sell') changeQuantity(product.id, -1);
     if (button.dataset.action === 'edit') openForm(product);
     if (button.dataset.action === 'delete') { pendingDeleteId = product.id; deleteDialog.showModal(); }
   });
