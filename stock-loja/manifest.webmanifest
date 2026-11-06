@@ -1,0 +1,14 @@
+{
+  "name": "Stock — Gestão da Loja",
+  "short_name": "Stock",
+  "description": "Gestão simples de produtos e stock, mesmo sem internet.",
+  "lang": "pt",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f7f3",
+  "theme_color": "#f6f7f3",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
