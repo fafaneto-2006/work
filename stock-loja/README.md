@@ -6,6 +6,7 @@ App web instalável para telemóvel, em português, que ajuda uma loja a manter 
 
 - Cadastro de produtos com qualquer nome e quantidade inicial.
 - Edição do nome e da quantidade, além de ajustes rápidos de entrada e saída.
+- Botão **Vendido** em cada produto para registar uma unidade vendida ou retirada do stock.
 - Resumo de unidades totais, produtos cadastrados e itens a repor (5 ou menos).
 - Estados de stock disponível, baixo e esgotado.
 - Pesquisa, ordenação e cópia de segurança em JSON.
@@ -19,7 +20,7 @@ Para um servidor local com Python instalado, execute `python3 -m http.server 800
 
 ## Ficheiros
 
-- `index.html`, `styles.css`, `app.js`: interface e gestão do inventário.
+- `index.html`, `styles.css`, `sold-button.css`, `app.js`: interface e gestão do inventário.
 - `manifest.webmanifest`, `service-worker.js`, `icon.svg`: instalação e cache offline.
 
 ## Limites atuais
