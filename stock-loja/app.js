@@ -4,6 +4,8 @@
   const productDialog = document.querySelector('#productDialog');
   const deleteDialog = document.querySelector('#deleteDialog');
   const productForm = document.querySelector('#productForm');
+  const installButton = document.querySelector('#installButton');
+  const installDialog = document.querySelector('#installDialog');
   const nameInput = document.querySelector('#productName');
   const quantityInput = document.querySelector('#productQuantity');
   const searchInput = document.querySelector('#searchInput');
@@ -13,6 +15,7 @@
   ];
   let products = loadProducts();
   let pendingDeleteId = null;
+  let deferredInstallPrompt = null;
 
   function loadProducts() {
     try {
@@ -146,6 +149,49 @@
     const url = URL.createObjectURL(file);
     const link = document.createElement('a'); link.href = url; link.download = `stock-backup-${new Date().toISOString().slice(0, 10)}.json`; link.click();
     URL.revokeObjectURL(url);
+  });
+
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isAndroid = /android/i.test(navigator.userAgent);
+  const isInstalled = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  installButton.hidden = isInstalled;
+
+  function showInstallHelp() {
+    const instructions = document.querySelector('#installInstructions');
+    const confirmButton = document.querySelector('#confirmInstall');
+    if (isIOS) {
+      instructions.textContent = 'No iPhone ou iPad, abra esta página no Safari, toque em Partilhar e escolha “Adicionar ao ecrã principal”. Deixe ativa a opção “Abrir como app web” e toque em Adicionar.';
+      confirmButton.hidden = true;
+    } else if (isAndroid && deferredInstallPrompt) {
+      instructions.textContent = 'Confirme a instalação para adicionar o Stock ao ecrã inicial e à lista de apps.';
+      confirmButton.hidden = false;
+    } else if (isAndroid) {
+      instructions.textContent = 'No Chrome para Android, abra o menu ⋮ e escolha “Instalar app” ou “Adicionar ao ecrã inicial”.';
+      confirmButton.hidden = true;
+    } else {
+      instructions.textContent = 'Abra este endereço no Safari de um iPhone ou no Chrome de um Android e siga as instruções de instalação.';
+      confirmButton.hidden = true;
+    }
+    installDialog.showModal();
+  }
+
+  window.addEventListener('beforeinstallprompt', event => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+  });
+  window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+    installButton.hidden = true;
+  });
+  installButton.addEventListener('click', showInstallHelp);
+  document.querySelector('#closeInstall').addEventListener('click', () => installDialog.close());
+  document.querySelector('#dismissInstall').addEventListener('click', () => installDialog.close());
+  document.querySelector('#confirmInstall').addEventListener('click', async () => {
+    if (!deferredInstallPrompt) return;
+    await deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    installDialog.close();
   });
 
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
