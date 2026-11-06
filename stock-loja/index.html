@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f6f7f3" />
+    <meta name="description" content="Gestão simples de produtos e stock, mesmo sem internet." />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Stock — gestão da loja</title>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#inicio" aria-label="Stock, início">
+          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m4 8 8-4 8 4-8 4-8-4Z"/><path d="m4 12 8 4 8-4M4 16l8 4 8-4"/></svg></span>
+          <span>stock<span class="brand-dot">.</span></span>
+        </a>
+        <div class="top-actions">
+          <span class="offline-pill"><span class="status-dot"></span><span>Guardado no dispositivo</span></span>
+          <button class="icon-button" id="backupButton" aria-label="Exportar cópia de segurança" title="Exportar cópia de segurança"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 16v4h14v-4"/></svg></button>
+        </div>
+      </header>
+
+      <section class="welcome" id="inicio">
+        <div>
+          <p class="eyebrow" id="todayLabel">PAINEL DA LOJA</p>
+          <h1>O seu stock,<br /><span>sempre sob controlo.</span></h1>
+          <p class="welcome-copy">Uma visão simples do que tem na loja.</p>
+        </div>
+        <div class="welcome-art" aria-hidden="true"><div class="art-halo"></div><div class="art-box box-back"></div><div class="art-box box-front"><i></i><b></b></div><div class="art-sparkle">✳</div></div>
+      </section>
+
+      <section class="stats-grid" aria-label="Resumo do stock">
+        <article class="stat-card stat-total"><div class="stat-heading"><span class="stat-icon lavender"><svg viewBox="0 0 24 24"><path d="m4 8 8-4 8 4-8 4-8-4Z"/><path d="m4 12 8 4 8-4M4 16l8 4 8-4"/></svg></span><span class="stat-label">Unidades em stock</span></div><strong id="totalUnits">0</strong><span class="stat-note">unidades no total</span></article>
+        <article class="stat-card"><div class="stat-heading"><span class="stat-icon mint"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg></span><span class="stat-label">Produtos diferentes</span></div><strong id="productCount">0</strong><span class="stat-note">itens cadastrados</span></article>
+        <article class="stat-card"><div class="stat-heading"><span class="stat-icon peach"><svg viewBox="0 0 24 24"><path d="M12 3 2.8 19h18.4L12 3Z"/><path d="M12 9v4m0 3h.01"/></svg></span><span class="stat-label">A repor</span></div><strong id="lowCount">0</strong><span class="stat-note">com 5 unidades ou menos</span></article>
+      </section>
+
+      <section class="inventory-section" id="inventario">
+        <div class="section-heading">
+          <div><p class="eyebrow">INVENTÁRIO</p><h2>Os seus produtos <span class="count-badge" id="countBadge">0</span></h2></div>
+          <button class="primary-button" id="addButton"><span class="plus">＋</span><span>Adicionar produto</span></button>
+        </div>
+        <div class="toolbar">
+          <label class="search-box"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg><input id="searchInput" type="search" placeholder="Procurar produto..." autocomplete="off" /><kbd>⌘ K</kbd></label>
+          <label class="sort-box"><span>Ordenar:</span><select id="sortSelect"><option value="name">Nome</option><option value="stock-low">Menor stock</option><option value="stock-high">Maior stock</option><option value="recent">Mais recentes</option></select><svg viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></label>
+        </div>
+        <div class="table-wrap">
+          <div class="table-head"><span>PRODUTO</span><span>QUANTIDADE</span><span>ESTADO</span><span class="actions-heading">AÇÕES</span></div>
+          <div id="productList" class="product-list"></div>
+        </div>
+        <div class="empty-state" id="emptyState" hidden><div class="empty-illustration"><span>✳</span><div></div></div><h3>A sua loja começa aqui</h3><p>Adicione o primeiro produto e acompanhe cada unidade do seu stock.</p><button class="primary-button" id="emptyAddButton"><span class="plus">＋</span>Adicionar produto</button></div>
+        <div class="no-results" id="noResults" hidden><div class="no-results-icon">⌕</div><h3>Nenhum resultado</h3><p>Tente outro nome de produto.</p></div>
+      </section>
+
+      <footer class="footer"><span><span class="footer-dot"></span>Os seus dados ficam guardados neste dispositivo</span><span>Feito para simplificar a sua loja <span class="heart">♥</span></span></footer>
+    </main>
+
+    <dialog class="product-dialog" id="productDialog">
+      <form id="productForm" method="dialog">
+        <div class="dialog-top"><span class="dialog-icon"><svg viewBox="0 0 24 24"><path d="m4 8 8-4 8 4-8 4-8-4Z"/><path d="m4 12 8 4 8-4"/></svg></span><button type="button" class="close-button" id="closeDialog" aria-label="Fechar">×</button></div>
+        <p class="eyebrow" id="dialogEyebrow">NOVO NO INVENTÁRIO</p><h2 id="dialogTitle">Adicionar produto</h2><p class="dialog-copy">Preencha os dados do produto. Pode alterá-los quando quiser.</p>
+        <input type="hidden" id="productId" />
+        <label class="field-label" for="productName">Nome do produto</label><input class="text-field" id="productName" name="name" maxlength="80" placeholder="Ex.: Café moído 250 g" required />
+        <label class="field-label" for="productQuantity">Quantidade em stock</label><div class="number-field"><button type="button" id="quantityMinus" aria-label="Diminuir quantidade">−</button><input id="productQuantity" name="quantity" type="number" min="0" step="1" value="0" required /><button type="button" id="quantityPlus" aria-label="Aumentar quantidade">＋</button></div>
+        <div class="dialog-actions"><button type="button" class="secondary-button" id="cancelDialog">Cancelar</button><button class="primary-button" id="saveButton" type="submit">Guardar produto</button></div>
+      </form>
+    </dialog>
+    <dialog class="confirm-dialog" id="deleteDialog"><div class="dialog-top"><span class="dialog-icon danger-icon">⌫</span><button type="button" class="close-button" id="closeDelete" aria-label="Fechar">×</button></div><p class="eyebrow">REMOVER DO INVENTÁRIO</p><h2>Eliminar produto?</h2><p class="dialog-copy">Esta ação remove o produto e a respetiva quantidade do seu inventário.</p><div class="dialog-actions"><button class="secondary-button" id="keepProduct">Manter produto</button><button class="danger-button" id="confirmDelete">Eliminar</button></div></dialog>
+    <input type="file" id="importInput" accept="application/json,.json" hidden />
+    <script src="app.js" defer></script>
+  </body>
+</html>
