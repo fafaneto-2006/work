@@ -16,6 +16,7 @@
   let session = null;
   let profile = null;
   let signupMode = false;
+  let inventoryChannel = null;
 
   function message(text = '', isError = false) {
     error.hidden = !text || !isError;
@@ -69,6 +70,7 @@
   function escapeHTML(value) { return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
   async function refreshSession(nextSession) {
+    if (inventoryChannel) { client.removeChannel(inventoryChannel); inventoryChannel = null; }
     session = nextSession;
     profile = null;
     if (session && client) {
@@ -76,7 +78,11 @@
       profile = data || null;
     }
     updateUI();
-    if (cloudMode()) { await loadInventory(); await loadUsers(); }
+    if (cloudMode()) {
+      await loadInventory();
+      await loadUsers();
+      inventoryChannel = client.channel(`stock-products-${session.user.id}`).on('postgres_changes', { event:'*', schema:'public', table:'products' }, () => loadInventory()).subscribe();
+    }
   }
 
   async function sell(productId, quantity = 1) {
@@ -140,4 +146,5 @@
   if (client) client.auth.getSession().then(({ data }) => refreshSession(data.session)).catch(() => {});
   client?.auth.onAuthStateChange((_event, nextSession) => { setTimeout(() => refreshSession(nextSession), 0); });
   window.addEventListener('online', () => { if (cloudMode()) loadInventory(); });
+  window.addEventListener('focus', () => { if (cloudMode()) loadInventory(); });
 })();
