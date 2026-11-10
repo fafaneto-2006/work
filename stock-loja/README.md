@@ -13,7 +13,7 @@ App web instalável para telemóvel, em português, que ajuda uma loja a manter 
 - Pesquisa, ordenação e cópia de segurança em JSON.
 - Interface adaptada a ecrãs pequenos e cache de ficheiros para uso offline.
 - Conta de administrador para gerir produtos e aprovar/bloquear utilizadores; perfil de utilizador para consultar stock e registar vendas.
-- Autenticação e inventário partilhado entre dispositivos pelo Supabase, com registo de movimentos e políticas RLS.
+- Autenticação e inventário partilhado entre dispositivos pelo Supabase, com atualização em tempo real, registo de movimentos e políticas RLS.
 
 ## Como abrir
 
