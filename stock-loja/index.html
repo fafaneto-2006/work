@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="sold-button.css" />
     <link rel="stylesheet" href="platform-install.css" />
+    <link rel="stylesheet" href="auth.css" />
     <title>Stock — gestão da loja</title>
   </head>
   <body>
@@ -27,6 +28,7 @@
         <div class="top-actions">
           <span class="offline-pill"><span class="status-dot"></span><span>Guardado no dispositivo</span></span>
           <button class="install-button" id="installButton" aria-label="Instalar app no telemóvel" title="Instalar app"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10 18h4"/></svg><span>Instalar app</span></button>
+          <button class="account-button" id="accountButton">Entrar</button>
           <button class="icon-button" id="backupButton" aria-label="Exportar cópia de segurança" title="Exportar cópia de segurança"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 16v4h14v-4"/></svg></button>
         </div>
       </header>
@@ -83,6 +85,23 @@
     </dialog>
     <dialog class="confirm-dialog" id="deleteDialog"><div class="dialog-top"><span class="dialog-icon danger-icon">⌫</span><button type="button" class="close-button" id="closeDelete" aria-label="Fechar">×</button></div><p class="eyebrow">REMOVER DO INVENTÁRIO</p><h2>Eliminar produto?</h2><p class="dialog-copy">Esta ação remove o produto e a respetiva quantidade do seu inventário.</p><div class="dialog-actions"><button class="secondary-button" id="keepProduct">Manter produto</button><button class="danger-button" id="confirmDelete">Eliminar</button></div></dialog>
     <input type="file" id="importInput" accept="application/json,.json" hidden />
+    <dialog class="account-dialog" id="accountDialog">
+      <div class="dialog-top"><span class="dialog-icon">◎</span><button type="button" class="close-button" id="closeAccount" aria-label="Fechar">×</button></div>
+      <p class="eyebrow">CONTA E ACESSO</p><h2 id="accountTitle">Entrar na loja</h2>
+      <p class="dialog-copy" id="accountStatus">Entre para sincronizar o inventário e usar o seu perfil.</p>
+      <form id="authForm">
+        <label class="field-label" for="authName" id="nameLabel" hidden>Seu nome</label><input class="text-field" id="authName" autocomplete="name" placeholder="Seu nome" hidden />
+        <label class="field-label" for="authEmail">E-mail</label><input class="text-field" id="authEmail" type="email" autocomplete="email" required placeholder="voce@loja.com" />
+        <label class="field-label" for="authPassword">Senha</label><input class="text-field" id="authPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="Mínimo de 6 caracteres" />
+        <p class="auth-error" id="authError" role="status" hidden></p>
+        <div class="dialog-actions"><button type="button" class="secondary-button" id="toggleAuthMode">Criar conta</button><button class="primary-button" id="authSubmit">Entrar</button></div>
+      </form>
+      <section id="adminUsers" hidden><h3>Contas da equipa</h3><div id="userList"></div></section>
+      <button class="secondary-button signout-button" id="signOutButton" hidden>Sair da conta</button>
+    </dialog>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
+    <script src="supabase-config.js" defer></script>
+    <script src="auth.js" defer></script>
     <script src="app.js" defer></script>
   </body>
 </html>
