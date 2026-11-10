@@ -17,7 +17,13 @@ App web instalável para telemóvel, em português, que ajuda uma loja a manter 
 
 Sirva esta pasta por HTTPS ou por um servidor local. Abra a página no navegador do telemóvel e use a opção **Adicionar ao ecrã inicial** / **Instalar app**. Depois da primeira visita online, a interface fica disponível offline. Os produtos são guardados localmente no navegador desse dispositivo.
 
-Para um servidor local com Python instalado, execute `python3 -m http.server 8000` nesta pasta e aceda a `http://localhost:8000`.
+### Executar pelo VS Code
+
+1. Abra esta pasta no VS Code.
+2. Escolha **Terminal → Run Task…** (ou **Executar Tarefa…**) e selecione **Rodar Stock no navegador**.
+3. No navegador, aceda a `http://localhost:8000`.
+
+Também pode iniciar manualmente pelo terminal integrado: `python3 -m http.server 8000 --bind 127.0.0.1`, a partir desta pasta. Não abra `index.html` diretamente como ficheiro (`file://`): o navegador precisa do servidor local para ativar o service worker e o modo offline.
 
 ## Instalar no telemóvel
 
