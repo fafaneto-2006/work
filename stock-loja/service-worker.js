@@ -1,5 +1,5 @@
-const CACHE_NAME = 'stock-loja-v4';
-const APP_FILES = ['./', './index.html', './styles.css', './sold-button.css', './platform-install.css', './app.js', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
+const CACHE_NAME = 'stock-loja-v5';
+const APP_FILES = ['./', './index.html', './styles.css', './sold-button.css', './platform-install.css', './auth.css', './auth.js', './supabase-config.js', './app.js', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_FILES)));
