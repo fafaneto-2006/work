@@ -167,6 +167,8 @@ alter table public.profiles enable row level security;
 alter table public.products enable row level security;
 alter table public.stock_movements enable row level security;
 
+alter publication supabase_realtime add table public.products;
+
 revoke all on public.profiles, public.products, public.stock_movements from anon, authenticated;
 grant select, update (display_name) on public.profiles to authenticated;
 grant select, insert, update, delete on public.products to authenticated;
