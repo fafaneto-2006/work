@@ -17,6 +17,15 @@
   let pendingDeleteId = null;
   let deferredInstallPrompt = null;
   let cloudRole = null;
+  const SALES_KEY = 'stock-loja-sales-v1';
+  let sales = JSON.parse(localStorage.getItem(SALES_KEY) || '[]');
+  const themeToggle = document.querySelector('#themeToggle');
+  const savedTheme = localStorage.getItem('stock-loja-theme-v1');
+  if (savedTheme === 'dark') document.body.classList.add('dark-mode');
+  themeToggle.textContent = document.body.classList.contains('dark-mode') ? '☀' : '☾';
+  themeToggle.setAttribute('aria-label', document.body.classList.contains('dark-mode') ? 'Ativar modo claro' : 'Ativar modo escuro');
+  themeToggle.addEventListener('click', () => { const dark = document.body.classList.toggle('dark-mode'); localStorage.setItem('stock-loja-theme-v1', dark ? 'dark' : 'light'); themeToggle.textContent = dark ? '☀' : '☾'; themeToggle.setAttribute('aria-label', dark ? 'Ativar modo claro' : 'Ativar modo escuro'); });
+  document.querySelectorAll('.app-tab').forEach(tab => tab.addEventListener('click', () => { document.querySelectorAll('.app-tab').forEach(item => item.classList.toggle('is-active', item === tab)); document.querySelector('#inventoryView').hidden = tab.dataset.view !== 'inventoryView'; document.querySelector('#salesView').hidden = tab.dataset.view !== 'salesView'; if (tab.dataset.view === 'salesView') refreshSales(); }));
 
   function loadProducts() {
     try {
@@ -71,7 +80,41 @@
         <div class="row-actions"><button class="sold-button" data-action="sell" aria-label="Registar uma unidade vendida ou retirada de ${escapeHTML(item.name)}" title="Retirar uma unidade do stock" ${quantity === 0 ? 'disabled' : ''}>Vendido</button>${canManage ? `<button class="row-action" data-action="edit" aria-label="Editar ${escapeHTML(item.name)}" title="Editar">✎</button><button class="row-action delete" data-action="delete" aria-label="Eliminar ${escapeHTML(item.name)}" title="Eliminar">⌫</button>` : ''}</div>
       </article>`;
     }).join('');
+    renderSales();
   }
+
+  function renderSales() {
+    const select = document.querySelector('#salesProduct');
+    const current = select.value;
+    select.innerHTML = '<option value="">Escolha um produto</option>' + products.map(p => `<option value="${escapeHTML(p.id)}" ${Number(p.quantity) < 1 ? 'disabled' : ''}>${escapeHTML(p.name)} — ${Math.max(0, Number(p.quantity))} em stock</option>`).join('');
+    if (products.some(p => p.id === current)) select.value = current;
+    document.querySelector('#salesCount').textContent = sales.length.toLocaleString('pt');
+    document.querySelector('#salesUnits').textContent = sales.reduce((sum, item) => sum + item.quantity, 0).toLocaleString('pt');
+    document.querySelector('#salesHistory').innerHTML = sales.slice(0, 10).map(item => `<article class="activity-row"><span class="activity-sign is-out">−</span><div><strong>${escapeHTML(item.name)}</strong><small>${new Date(item.at).toLocaleString('pt')}</small></div><b>${item.quantity} un.</b></article>`).join('') || '<p class="dialog-copy">Ainda não há vendas registadas neste dispositivo.</p>';
+  }
+
+  async function refreshSales() { if (window.StockAuth?.isCloudMode()) { const cloudSales = await window.StockAuth.loadSales(); if (cloudSales) sales = cloudSales; } renderSales(); }
+
+  document.querySelector('#salesForm').addEventListener('submit', async event => {
+    event.preventDefault();
+    const product = products.find(item => item.id === document.querySelector('#salesProduct').value);
+    const quantity = Math.floor(Number(document.querySelector('#salesQuantity').value));
+    if (!product || quantity < 1) return;
+    if (Number(product.quantity) < quantity) { alert('Stock insuficiente para esta venda.'); return; }
+    if (window.StockAuth?.isCloudMode()) {
+      const ok = await window.StockAuth.sell(product.id, quantity);
+      if (!ok) return;
+      product.quantity = Number(product.quantity) - quantity;
+    } else { product.quantity = Number(product.quantity) - quantity; saveProducts(); }
+    sales.unshift({ id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()), name: product.name, quantity, at: new Date().toISOString() });
+    try { localStorage.setItem(SALES_KEY, JSON.stringify(sales)); } catch {}
+    render();
+    if (window.StockAuth?.isCloudMode()) await refreshSales();
+    document.querySelector('#salesForm').reset();
+    document.querySelector('#salesQuantity').value = 1;
+    document.querySelector('[data-view="salesView"]').click();
+    alert('Venda registada com sucesso.');
+  });
 
   function hash(value) {
     let result = 0;
