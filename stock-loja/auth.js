@@ -13,9 +13,12 @@
   const passwordInput = document.querySelector('#authPassword');
   const adminUsers = document.querySelector('#adminUsers');
   const userList = document.querySelector('#userList');
+  const adminPreview = document.querySelector('#adminPreview');
+  const previewButton = document.querySelector('#previewAdminButton');
   let session = null;
   let profile = null;
   let signupMode = false;
+  let previewMode = false;
   let inventoryChannel = null;
 
   function message(text = '', isError = false) {
@@ -30,7 +33,7 @@
     const signedIn = Boolean(session);
     accountButton.textContent = signedIn ? (profile?.role === 'admin' ? 'Admin' : 'Minha conta') : 'Entrar';
     document.querySelector('#accountTitle').textContent = signedIn ? (profile?.role === 'admin' ? 'Painel do administrador' : 'Conta de utilizador') : (signupMode ? 'Criar conta' : 'Entrar na loja');
-    form.hidden = signedIn || !client;
+    form.hidden = signedIn || !client || previewMode;
     nameInput.hidden = !signupMode || signedIn || !client;
     nameLabel.hidden = nameInput.hidden;
     document.querySelector('#toggleAuthMode').hidden = signedIn || !client;
@@ -38,6 +41,8 @@
     document.querySelector('#authSubmit').textContent = signupMode ? 'Criar conta' : 'Entrar';
     document.querySelector('#signOutButton').hidden = !signedIn;
     adminUsers.hidden = !(signedIn && profile?.role === 'admin' && profile?.approved);
+    adminPreview.hidden = !previewMode;
+    previewButton.hidden = signedIn || !client || previewMode;
     if (!client) status.textContent = 'Login precisa de internet. O inventário local continua disponível offline.';
     else if (!signedIn) status.textContent = 'Entre para sincronizar o inventário. Pode continuar a usar o app localmente sem conta.';
     else if (!profile) status.textContent = 'A carregar o seu perfil…';
@@ -115,6 +120,8 @@
 
   accountButton.addEventListener('click', async () => { show(); if (client && profile?.role === 'admin') await loadUsers(); });
   document.querySelector('#closeAccount').addEventListener('click', () => dialog.close());
+  previewButton.addEventListener('click', () => { previewMode = true; updateUI(); });
+  document.querySelector('#previewBack').addEventListener('click', () => { previewMode = false; updateUI(); });
   document.querySelector('#toggleAuthMode').addEventListener('click', () => { signupMode = !signupMode; error.hidden = true; updateUI(); });
   form.addEventListener('submit', async event => {
     event.preventDefault();
