@@ -6,7 +6,9 @@ App web instalável para telemóvel, em português, que ajuda uma loja a manter 
 
 - Cadastro de produtos com qualquer nome e quantidade inicial.
 - Edição do nome e da quantidade, além de ajustes rápidos de entrada e saída.
-- Botão **Vendido** em cada produto para registar uma unidade vendida ou retirada do stock.
+- Botão **Vendido** em cada produto e secção **Vendas** para escolher produto e quantidade, com confirmação contra stock insuficiente.
+- Histórico e resumo de vendas recentes; no modo offline, as vendas ficam guardadas apenas neste dispositivo.
+- Tema claro/escuro com preferência guardada no dispositivo.
 - Instalação como app no ecrã inicial do iPhone/iPad e do Android, com ícones próprios para cada plataforma.
 - Resumo de unidades totais, produtos cadastrados e itens a repor (5 ou menos).
 - Estados de stock disponível, baixo e esgotado.
@@ -14,6 +16,7 @@ App web instalável para telemóvel, em português, que ajuda uma loja a manter 
 - Interface adaptada a ecrãs pequenos e cache de ficheiros para uso offline.
 - Conta de administrador para gerir produtos e aprovar/bloquear utilizadores; perfil de utilizador para consultar stock e registar vendas.
 - Pré-visualização do painel de administração com contas de exemplo e ações desativadas.
+- Acesso com e-mail/senha, link por e-mail, recuperação de senha e botões Google/Apple.
 - Autenticação e inventário partilhado entre dispositivos pelo Supabase, com atualização em tempo real, registo de movimentos e políticas RLS.
 
 ## Como abrir
@@ -59,6 +62,8 @@ O projeto Supabase **stock-loja** está criado na organização conectada. O app
 
 3. Entre novamente no app. Se já havia produtos guardados neste dispositivo e o banco estiver vazio, o app importa-os na primeira entrada do administrador. O botão **Admin** abre a gestão da equipa. Aprove contas como utilizador ou administrador; só administradores aprovados podem alterar produtos.
 
-Utilizadores aprovados veem o stock partilhado e podem usar **Vendido**. A operação é registada no histórico e atualiza a quantidade atomicamente. A gestão de produtos e o login partilhado precisam de internet. Sem internet, o app continua disponível com o inventário local do dispositivo; as vendas feitas offline não são sincronizadas com o banco.
+Utilizadores aprovados veem o stock partilhado e podem usar **Vendido** ou a secção **Vendas**. A venda online é registada no histórico e atualiza a quantidade atomicamente. A gestão de produtos e o login partilhado precisam de internet. Sem internet, o app continua disponível com o inventário local do dispositivo; as vendas offline ficam no histórico local e não são sincronizadas com o banco.
+
+Google e Apple exigem credenciais próprias dos provedores em **Authentication → Sign In / Providers** no Supabase. Configure também o endereço publicado e `http://localhost:8000` na lista de URLs de redirecionamento. A recuperação e o link de acesso por e-mail dependem da entrega de mensagens do Supabase; configure SMTP próprio antes de produção. Ative **Leaked Password Protection** em **Authentication → Settings → Password Security** para bloquear senhas conhecidas em vazamentos.
 
 O projeto foi criado com custo estimado de US$ 0/mês no momento da criação; limites e preços podem variar conforme o uso e o plano Supabase.
