@@ -12,6 +12,8 @@ App web instalável para telemóvel, em português, que ajuda uma loja a manter 
 - Estados de stock disponível, baixo e esgotado.
 - Pesquisa, ordenação e cópia de segurança em JSON.
 - Interface adaptada a ecrãs pequenos e cache de ficheiros para uso offline.
+- Conta de administrador para gerir produtos e aprovar/bloquear utilizadores; perfil de utilizador para consultar stock e registar vendas.
+- Autenticação e inventário partilhado entre dispositivos pelo Supabase, com registo de movimentos e políticas RLS.
 
 ## Como abrir
 
@@ -34,9 +36,28 @@ O app é uma PWA: instala-se pelo navegador nos dois sistemas e guarda os dados 
 
 ## Ficheiros
 
-- `index.html`, `styles.css`, `sold-button.css`, `platform-install.css`, `app.js`: interface e gestão do inventário.
+- `index.html`, `styles.css`, `sold-button.css`, `platform-install.css`, `auth.css`, `app.js`, `auth.js`: interface, inventário e contas.
+- `supabase-config.js`: URL do projeto e chave publicável (não contém chave secreta).
+- `supabase/schema.sql`: estrutura do banco, funções e políticas RLS aplicadas ao projeto.
 - `manifest.webmanifest`, `service-worker.js`, `icon.svg`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`: instalação e cache offline em iOS e Android.
 
-## Limites atuais
+## Supabase: configurar a primeira conta de administrador
 
-Os dados não são sincronizados entre telemóveis ou computadores. Use a cópia de segurança para guardar uma exportação do inventário.
+O projeto Supabase **stock-loja** está criado na organização conectada. O app usa `https://ubkngdqwqhbutslvndrq.supabase.co`; a chave publicável fica em `supabase-config.js`. O banco contém `profiles`, `products` e `stock_movements`, com RLS ativo. Contas novas começam como utilizadores pendentes; o formulário de registo nunca permite escolher o perfil de administrador.
+
+1. Crie uma conta no app com o seu e-mail e confirme a mensagem de verificação, se for solicitada.
+2. No painel Supabase do projeto, abra **SQL Editor** e execute o comando abaixo, substituindo o e-mail pelo usado no registo:
+
+   ```sql
+   update public.profiles p
+   set role = 'admin', approved = true
+   from auth.users u
+   where p.id = u.id
+     and lower(u.email) = lower('SEU_EMAIL_AQUI');
+   ```
+
+3. Entre novamente no app. O botão **Admin** abre a gestão da equipa. Aprove contas como utilizador ou administrador; só administradores aprovados podem alterar produtos.
+
+Utilizadores aprovados veem o stock partilhado e podem usar **Vendido**. A operação é registada no histórico e atualiza a quantidade atomicamente. A gestão de produtos e o login partilhado precisam de internet. Sem internet, o app continua disponível com o inventário local do dispositivo; as vendas feitas offline não são sincronizadas com o banco.
+
+O projeto foi criado com custo estimado de US$ 0/mês no momento da criação; limites e preços podem variar conforme o uso e o plano Supabase.
