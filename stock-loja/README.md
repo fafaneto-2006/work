@@ -56,7 +56,7 @@ O projeto Supabase **stock-loja** está criado na organização conectada. O app
      and lower(u.email) = lower('SEU_EMAIL_AQUI');
    ```
 
-3. Entre novamente no app. O botão **Admin** abre a gestão da equipa. Aprove contas como utilizador ou administrador; só administradores aprovados podem alterar produtos.
+3. Entre novamente no app. Se já havia produtos guardados neste dispositivo e o banco estiver vazio, o app importa-os na primeira entrada do administrador. O botão **Admin** abre a gestão da equipa. Aprove contas como utilizador ou administrador; só administradores aprovados podem alterar produtos.
 
 Utilizadores aprovados veem o stock partilhado e podem usar **Vendido**. A operação é registada no histórico e atualiza a quantidade atomicamente. A gestão de produtos e o login partilhado precisam de internet. Sem internet, o app continua disponível com o inventário local do dispositivo; as vendas feitas offline não são sincronizadas com o banco.
 
