@@ -52,6 +52,10 @@
     if (!cloudMode()) return;
     const { data, error: queryError } = await client.from('products').select('id,name,quantity,created_at,updated_at').order('created_at', { ascending: false });
     if (queryError) { message(queryError.message, true); return; }
+    if ((!data || data.length === 0) && profile.role === 'admin') {
+      const localItems = window.StockApp?.getProducts() || [];
+      if (localItems.length) { await syncProducts(localItems); return; }
+    }
     window.StockApp?.replaceProducts((data || []).map(p => ({ id:p.id, name:p.name, quantity:p.quantity, createdAt:Date.parse(p.created_at) || Date.now(), updatedAt:Date.parse(p.updated_at) || Date.now() })));
   }
 
@@ -85,16 +89,18 @@
 
   async function syncProducts(items) {
     if (!cloudMode() || profile.role !== 'admin') return;
+    const normalized = items.map(p => ({ ...p, id: /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(p.id) ? p.id : crypto.randomUUID() }));
+    if (normalized.some((p, i) => p.id !== items[i].id)) window.StockApp?.replaceProducts(normalized);
     const { data: current, error: fetchError } = await client.from('products').select('id');
     if (fetchError) { message(fetchError.message, true); return; }
-    const wanted = new Set(items.map(p => p.id));
+    const wanted = new Set(normalized.map(p => p.id));
     const remove = (current || []).filter(p => !wanted.has(p.id)).map(p => p.id);
     if (remove.length) {
       const { error: deleteError } = await client.from('products').delete().in('id', remove);
       if (deleteError) { message(deleteError.message, true); return; }
     }
-    if (items.length) {
-      const rows = items.map(p => ({ id:p.id, name:p.name, quantity:p.quantity, created_by:session.user.id }));
+    if (normalized.length) {
+      const rows = normalized.map(p => ({ id:p.id, name:p.name, quantity:p.quantity, created_by:session.user.id }));
       const { error: upsertError } = await client.from('products').upsert(rows);
       if (upsertError) { message(upsertError.message, true); return; }
     }
