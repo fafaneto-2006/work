@@ -16,6 +16,7 @@
   let products = loadProducts();
   let pendingDeleteId = null;
   let deferredInstallPrompt = null;
+  let cloudRole = null;
 
   function loadProducts() {
     try {
@@ -24,9 +25,10 @@
     } catch { return []; }
   }
 
-  function saveProducts() {
+  function saveProducts(sync = true) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+      if (sync) window.dispatchEvent(new CustomEvent('stock:products-changed', { detail: products }));
       return true;
     } catch {
       alert('Não foi possível guardar os dados. Verifique o espaço disponível no dispositivo.');
@@ -61,11 +63,12 @@
       const [bg, fg, symbol] = palette[hash(item.id) % palette.length];
       const stockClass = quantity === 0 ? 'stock-out' : quantity <= 5 ? 'stock-low' : 'stock-ok';
       const stockLabel = quantity === 0 ? 'Esgotado' : quantity <= 5 ? 'Stock baixo' : 'Disponível';
-      return `<article class="product-row" data-id="${escapeHTML(item.id)}">
+      const canManage = !cloudRole || cloudRole === 'admin';
+      return `<article class="product-row ${canManage ? '' : 'user-view'}" data-id="${escapeHTML(item.id)}">
         <div class="product-info"><span class="product-avatar" style="background:${bg};color:${fg}">${symbol}</span><div><strong>${escapeHTML(item.name)}</strong><small>Produto #${String(index + 1).padStart(3, '0')}</small></div></div>
-        <div class="quantity-control"><button class="qty-btn" data-action="decrease" aria-label="Diminuir quantidade de ${escapeHTML(item.name)}">−</button><strong>${quantity.toLocaleString('pt')}</strong><button class="qty-btn" data-action="increase" aria-label="Aumentar quantidade de ${escapeHTML(item.name)}">＋</button></div>
+        <div class="quantity-control">${canManage ? `<button class="qty-btn" data-action="decrease" aria-label="Diminuir quantidade de ${escapeHTML(item.name)}">−</button>` : ''}<strong>${quantity.toLocaleString('pt')}</strong>${canManage ? `<button class="qty-btn" data-action="increase" aria-label="Aumentar quantidade de ${escapeHTML(item.name)}">＋</button>` : ''}</div>
         <span class="stock-tag ${stockClass}">${stockLabel}</span>
-        <div class="row-actions"><button class="sold-button" data-action="sell" aria-label="Registar uma unidade vendida ou retirada de ${escapeHTML(item.name)}" title="Retirar uma unidade do stock" ${quantity === 0 ? 'disabled' : ''}>Vendido</button><button class="row-action" data-action="edit" aria-label="Editar ${escapeHTML(item.name)}" title="Editar">✎</button><button class="row-action delete" data-action="delete" aria-label="Eliminar ${escapeHTML(item.name)}" title="Eliminar">⌫</button></div>
+        <div class="row-actions"><button class="sold-button" data-action="sell" aria-label="Registar uma unidade vendida ou retirada de ${escapeHTML(item.name)}" title="Retirar uma unidade do stock" ${quantity === 0 ? 'disabled' : ''}>Vendido</button>${canManage ? `<button class="row-action" data-action="edit" aria-label="Editar ${escapeHTML(item.name)}" title="Editar">✎</button><button class="row-action delete" data-action="delete" aria-label="Eliminar ${escapeHTML(item.name)}" title="Eliminar">⌫</button>` : ''}</div>
       </article>`;
     }).join('');
   }
@@ -77,6 +80,7 @@
   }
 
   function openForm(product = null) {
+    if (cloudRole && cloudRole !== 'admin') return;
     productForm.reset();
     document.querySelector('#productId').value = product?.id || '';
     nameInput.value = product?.name || '';
@@ -126,8 +130,11 @@
     if (!product) return;
     if (button.dataset.action === 'increase') changeQuantity(product.id, 1);
     if (button.dataset.action === 'decrease') changeQuantity(product.id, -1);
-    if (button.dataset.action === 'sell') changeQuantity(product.id, -1);
-    if (button.dataset.action === 'edit') openForm(product);
+    if (button.dataset.action === 'sell') {
+      if (window.StockAuth?.isCloudMode()) window.StockAuth.sell(product.id).catch(() => alert('Não foi possível registar a venda. Verifique a ligação à internet.'));
+      else changeQuantity(product.id, -1);
+    }
+    if (button.dataset.action === 'edit' && (!cloudRole || cloudRole === 'admin')) openForm(product);
     if (button.dataset.action === 'delete') { pendingDeleteId = product.id; deleteDialog.showModal(); }
   });
 
@@ -199,5 +206,11 @@
   }
   const dateLabel = new Intl.DateTimeFormat('pt', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date());
   document.querySelector('#todayLabel').textContent = dateLabel.toLocaleUpperCase('pt');
+  window.StockApp = {
+    setCloudRole(role) { cloudRole = role; render(); },
+    replaceProducts(items) { products = items; saveProducts(false); render(); },
+    getProducts() { return products; }
+  };
+  window.addEventListener('stock:products-changed', event => window.StockAuth?.syncProducts(event.detail));
   render();
 })();
