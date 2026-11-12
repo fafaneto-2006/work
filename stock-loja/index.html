@@ -2,6 +2,7 @@
 <html lang="pt">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://ubkngdqwqhbutslvndrq.supabase.co wss://ubkngdqwqhbutslvndrq.supabase.co; object-src 'none'; base-uri 'none'; form-action 'self'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#f6f7f3" />
     <meta name="description" content="Gestão simples de produtos e stock, mesmo sem internet." />
@@ -16,6 +17,9 @@
     <link rel="stylesheet" href="sold-button.css" />
     <link rel="stylesheet" href="platform-install.css" />
     <link rel="stylesheet" href="auth.css" />
+    <link rel="stylesheet" href="pos.css" />
+    <link rel="stylesheet" href="tabs.css" />
+    <link rel="stylesheet" href="assistant.css" />
     <title>Stock — gestão da loja</title>
   </head>
   <body>
@@ -29,6 +33,7 @@
           <span class="offline-pill"><span class="status-dot"></span><span>Guardado no dispositivo</span></span>
           <button class="install-button" id="installButton" aria-label="Instalar app no telemóvel" title="Instalar app"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10 18h4"/></svg><span>Instalar app</span></button>
           <button class="account-button" id="accountButton">Entrar</button>
+          <button class="secondary-button import-button" id="importButton" type="button">Importar</button>
           <button class="icon-button" id="themeToggle" aria-label="Ativar modo escuro" title="Modo escuro">☾</button>
           <button class="icon-button" id="backupButton" aria-label="Exportar cópia de segurança" title="Exportar cópia de segurança"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 16v4h14v-4"/></svg></button>
         </div>
@@ -49,7 +54,6 @@
         <article class="stat-card"><div class="stat-heading"><span class="stat-icon peach"><svg viewBox="0 0 24 24"><path d="M12 3 2.8 19h18.4L12 3Z"/><path d="M12 9v4m0 3h.01"/></svg></span><span class="stat-label">A repor</span></div><strong id="lowCount">0</strong><span class="stat-note">com 5 unidades ou menos</span></article>
       </section>
 
-      <nav class="app-tabs" aria-label="Secções da loja"><button type="button" class="app-tab is-active" data-view="inventoryView">Inventário</button><button type="button" class="app-tab" data-view="salesView">Vendas</button></nav>
       <section class="inventory-section" id="inventoryView">
         <div class="section-heading">
           <div><p class="eyebrow">INVENTÁRIO</p><h2>Os seus produtos <span class="count-badge" id="countBadge">0</span></h2></div>
@@ -69,7 +73,7 @@
 
       <section class="sales-section" id="salesView" hidden>
         <div class="section-heading"><div><p class="eyebrow">PONTO DE VENDA</p><h2>Registar uma venda</h2></div></div>
-        <form id="salesForm" class="sales-form"><label class="field-label" for="salesProduct">Produto</label><select id="salesProduct" class="text-field" required></select><label class="field-label" for="salesQuantity">Quantidade vendida</label><input id="salesQuantity" class="text-field" type="number" min="1" step="1" value="1" required /><button class="primary-button" type="submit">Confirmar venda</button></form>
+        <form id="salesForm" class="sales-form"><label class="field-label" for="salesProduct">Produto</label><select id="salesProduct" class="text-field" required></select><label class="field-label" for="salesQuantity">Quantidade vendida</label><input id="salesQuantity" class="text-field" type="number" min="1" max="10000" step="1" value="1" required /><button class="primary-button" type="submit">Confirmar venda</button></form>
         <div class="sales-metrics"><article><small>Vendas registadas</small><strong id="salesCount">0</strong></article><article><small>Unidades vendidas</small><strong id="salesUnits">0</strong></article></div>
         <h3 class="activity-heading">Vendas recentes</h3><div id="salesHistory"></div>
       </section>
@@ -87,7 +91,7 @@
         <p class="eyebrow" id="dialogEyebrow">NOVO NO INVENTÁRIO</p><h2 id="dialogTitle">Adicionar produto</h2><p class="dialog-copy">Preencha os dados do produto. Pode alterá-los quando quiser.</p>
         <input type="hidden" id="productId" />
         <label class="field-label" for="productName">Nome do produto</label><input class="text-field" id="productName" name="name" maxlength="80" placeholder="Ex.: Café moído 250 g" required />
-        <label class="field-label" for="productQuantity">Quantidade em stock</label><div class="number-field"><button type="button" id="quantityMinus" aria-label="Diminuir quantidade">−</button><input id="productQuantity" name="quantity" type="number" min="0" step="1" value="0" required /><button type="button" id="quantityPlus" aria-label="Aumentar quantidade">＋</button></div>
+        <label class="field-label" for="productQuantity">Quantidade em stock</label><div class="number-field"><button type="button" id="quantityMinus" aria-label="Diminuir quantidade">−</button><input id="productQuantity" name="quantity" type="number" min="0" max="1000000" step="1" value="0" required /><button type="button" id="quantityPlus" aria-label="Aumentar quantidade">＋</button></div>
         <div class="dialog-actions"><button type="button" class="secondary-button" id="cancelDialog">Cancelar</button><button class="primary-button" id="saveButton" type="submit">Guardar produto</button></div>
       </form>
     </dialog>
@@ -106,7 +110,7 @@
         <div class="dialog-actions"><button type="button" class="secondary-button" id="toggleAuthMode">Criar conta</button><button class="primary-button" id="authSubmit">Entrar</button></div>
         <div class="oauth-actions"><button type="button" class="oauth-button" data-provider="google"><b>G</b> Continuar com Google</button><button type="button" class="oauth-button" data-provider="apple"><b>●</b> Continuar com Apple</button></div>
       </form>
-      <form id="passwordRecovery" hidden><label class="field-label" for="newPassword">Nova senha</label><input class="text-field" id="newPassword" type="password" autocomplete="new-password" minlength="8" required placeholder="Pelo menos 8 caracteres" /><label class="field-label" for="confirmNewPassword">Confirme a nova senha</label><input class="text-field" id="confirmNewPassword" type="password" autocomplete="new-password" minlength="8" required /><button class="primary-button recovery-save" type="submit">Guardar nova senha</button></form>
+      <form id="passwordRecovery" hidden><label class="field-label" for="newPassword">Nova senha</label><input class="text-field" id="newPassword" type="password" autocomplete="new-password" minlength="10" required placeholder="Mínimo de 10 caracteres" /><label class="field-label" for="confirmNewPassword">Confirme a nova senha</label><input class="text-field" id="confirmNewPassword" type="password" autocomplete="new-password" minlength="10" required /><button class="primary-button recovery-save" type="submit">Guardar nova senha</button></form>
       <section id="adminUsers" hidden>
         <div class="admin-heading"><h3>Gestão da equipa</h3><button type="button" class="secondary-button" id="exportUsers">Exportar CSV</button></div>
         <div class="admin-summary"><article><small>Equipa</small><strong id="teamTotal">0</strong></article><article><small>Pendentes</small><strong id="teamPending">0</strong></article><article><small>Aprovados</small><strong id="teamApproved">0</strong></article></div>
@@ -123,9 +127,13 @@
       <button class="secondary-button signout-button" id="signOutButton" hidden>Sair da conta</button>
     </dialog>
     <div class="login-toast" id="loginToast" role="status" aria-live="polite" hidden></div>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous"></script>
     <script src="supabase-config.js" defer></script>
     <script src="auth.js" defer></script>
     <script src="app.js" defer></script>
+    <script src="pos.js" defer></script>
+    <script src="profit.js" defer></script>
+    <script src="tabs.js" defer></script>
+    <script src="assistant.js" defer></script>
   </body>
 </html>

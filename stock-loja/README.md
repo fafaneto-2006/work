@@ -12,7 +12,7 @@ App web instalável para telemóvel, em português, que ajuda uma loja a manter 
 - Instalação como app no ecrã inicial do iPhone/iPad e do Android, com ícones próprios para cada plataforma.
 - Resumo de unidades totais, produtos cadastrados e itens a repor (5 ou menos).
 - Estados de stock disponível, baixo e esgotado.
-- Pesquisa, ordenação e cópia de segurança em JSON.
+- Pesquisa, ordenação, cópia de segurança em JSON e importação de backups para restaurar rapidamente o inventário.
 - Interface adaptada a ecrãs pequenos e cache de ficheiros para uso offline.
 - Conta de administrador para gerir produtos e aprovar/bloquear utilizadores; perfil de utilizador para consultar stock e registar vendas.
 - Pré-visualização do painel de administração com contas de exemplo e ações desativadas.
@@ -43,6 +43,8 @@ O app é uma PWA: instala-se pelo navegador nos dois sistemas e guarda os dados 
 - `index.html`, `styles.css`, `sold-button.css`, `platform-install.css`, `auth.css`, `app.js`, `auth.js`: interface, inventário e contas.
 - `supabase-config.js`: URL do projeto e chave publicável (não contém chave secreta).
 - `supabase/schema.sql`: estrutura do banco, funções e políticas RLS aplicadas ao projeto.
+- `tabs.js`, `pos.js`, `profit.js`: navegação, caixa/faturas e relatório de lucro.
+- `assistant.js`, `supabase/functions/assistant/index.ts`: assistente de orientação, com chamada ao modelo feita no servidor.
 - `manifest.webmanifest`, `service-worker.js`, `icon.svg`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`: instalação e cache offline em iOS e Android.
 
 ## Supabase: configurar a primeira conta de administrador
@@ -67,3 +69,7 @@ Utilizadores aprovados veem o stock partilhado e podem usar **Vendido** ou a sec
 Google e Apple exigem credenciais próprias dos provedores em **Authentication → Sign In / Providers** no Supabase. Configure também o endereço publicado e `http://localhost:8000` na lista de URLs de redirecionamento. A recuperação e o link de acesso por e-mail dependem da entrega de mensagens do Supabase; configure SMTP próprio antes de produção. Ative **Leaked Password Protection** em **Authentication → Settings → Password Security** para bloquear senhas conhecidas em vazamentos.
 
 O projeto foi criado com custo estimado de US$ 0/mês no momento da criação; limites e preços podem variar conforme o uso e o plano Supabase.
+
+## Assistente de IA
+
+O assistente responde dúvidas sobre o app, mas não executa ações. No modo Supabase, aplica as migrações `002` a `005`, publique a função com `supabase functions deploy assistant` e configure `ANTHROPIC_API_KEY` e `ASSISTANT_ALLOWED_ORIGINS` nos secrets do projeto. Informe as origens exatas da PWA, separadas por vírgula; não coloque a chave Anthropic no frontend nem no GitHub. `ASSISTANT_DAILY_LIMIT` é opcional e tem padrão 60.

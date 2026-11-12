@@ -1,0 +1,80 @@
+.stock-tabs{display:flex;gap:6px;overflow-x:auto;padding:8px 0;margin:6px 0 2px;position:sticky;top:0;z-index:20;background:var(--bg,#f6f7f3);scrollbar-width:none}
+.stock-tabs::-webkit-scrollbar{display:none}
+.stock-tabs button{flex:0 0 auto;height:42px;padding:0 16px;border-radius:12px;border:1px solid #dfe3d6;background:#fff;font-family:inherit;font-weight:600;font-size:14px;color:#4a5145;cursor:pointer;white-space:nowrap}
+.stock-tabs button[aria-current="page"]{background:#e6ebd6;border-color:#4f5f33;color:#2f3b1c}
+.stock-tabs button[hidden]{display:none}
+.view{margin-top:12px}.view[hidden]{display:none}
+.home-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:16px}
+.home-links button{text-align:left;background:#fff;border:1px solid #e1e4d8;border-radius:16px;padding:14px 16px;font-family:inherit;color:inherit;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.home-links strong{font-size:15px}.home-links span{font-size:13px;color:#4a5145}
+.account-card{max-width:520px;background:#fff;border:1px solid #e1e4d8;border-radius:18px;padding:20px}
+.account-card .dialog-top{display:none}
+@media(max-width:700px){
+  .stock-tabs{position:fixed;top:auto;bottom:0;left:0;right:0;margin:0;padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));border-top:1px solid #dfe3d6;justify-content:space-between;gap:4px}
+  .stock-tabs button{flex:1 1 0;padding:0 6px;font-size:12.5px;height:44px}
+  .app-shell{padding-bottom:92px}
+}
+@media print{.stock-tabs{display:none!important}}
+
+.ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;flex:none}
+.qty-btn,.row-action,.icon-button,.plus,.close-button,.art-sparkle,#quantityMinus,#quantityPlus{display:inline-flex;align-items:center;justify-content:center}
+.dialog-icon .ic,.empty-illustration .ic{width:22px;height:22px}.art-sparkle .ic{width:26px;height:26px}
+.sales-block{margin-top:24px}
+
+/* ===== Cores explícitas (tema claro) para a Caixa e abas ===== */
+.pos-card,.pos-dialog,.home-links button,.account-card{color:#1f2419}
+.pos-card h3,.pos-line strong,.pos-tile strong,.pos-total{color:#1f2419}
+.pos-qty button,.pos-pay button,.pos-actions button,.pos-btn,.pos-field,.pos-prices input{color:#1f2419}
+.pos-actions .pos-primary{color:#fff}
+.pos-tile{color:#1f2419}
+
+/* ===== Tema escuro ===== */
+body.dark-mode{--ink:#edf1e9;--muted:#a9b3a5;--line:#394339;--paper:#202720;--bg:#151915;color-scheme:dark}
+body.dark-mode dialog,body.dark-mode .product-dialog,body.dark-mode .confirm-dialog,body.dark-mode .install-dialog,body.dark-mode .account-dialog{background:#202720;color:#edf1e9}
+body.dark-mode h1,body.dark-mode h2,body.dark-mode h3,body.dark-mode h4,body.dark-mode .field-label{color:#edf1e9}
+body.dark-mode .welcome h1 span{color:#9fd0b5}
+body.dark-mode .eyebrow,body.dark-mode .dialog-copy,body.dark-mode .welcome-copy,body.dark-mode small,body.dark-mode .stat-label,body.dark-mode .stat-note,body.dark-mode .table-head,body.dark-mode .preview-label,body.dark-mode .sort-box span,body.dark-mode .footer{color:#a9b3a5}
+body.dark-mode .stat-card strong,body.dark-mode .product-row strong,body.dark-mode .sales-metrics strong,body.dark-mode .admin-summary strong,body.dark-mode .activity-row strong,body.dark-mode .team-user strong{color:#edf1e9}
+body.dark-mode .qty-btn,body.dark-mode .row-action,body.dark-mode .search-box,body.dark-mode .sort-box select,body.dark-mode .number-field,body.dark-mode .number-field input,body.dark-mode .secondary-button,body.dark-mode select{background:#293229;color:#edf1e9;border-color:#394339}
+body.dark-mode input,body.dark-mode textarea{color:#edf1e9}
+body.dark-mode input::placeholder,body.dark-mode textarea::placeholder{color:#8a948a}
+body.dark-mode .count-badge{background:#2f3a2f;color:#cfd8c8}
+body.dark-mode .offline-pill,body.dark-mode .install-button{background:#202720;color:#cfd8c8;border-color:#394339}
+body.dark-mode .icon-button,body.dark-mode .close-button{color:#cfd8c8}
+/* Caixa, abas e conta */
+body.dark-mode .stock-tabs{background:#151915;border-color:#394339}
+body.dark-mode .stock-tabs button{background:#202720;border-color:#394339;color:#cfd8c8}
+body.dark-mode .stock-tabs button[aria-current="page"]{background:#3a4a2a;border-color:#8fa561;color:#eef5d9}
+body.dark-mode .pos-card,body.dark-mode .home-links button,body.dark-mode .account-card,body.dark-mode .pos-dialog{background:#202720;border-color:#394339;color:#edf1e9}
+body.dark-mode .pos-card h3,body.dark-mode .pos-line strong,body.dark-mode .pos-tile strong,body.dark-mode .pos-total,body.dark-mode .home-links strong,body.dark-mode .pos-doc h2{color:#edf1e9}
+body.dark-mode .pos-muted,body.dark-mode .pos-tile span,body.dark-mode .home-links span,body.dark-mode .pos-card summary{color:#b6c0b3}
+body.dark-mode .pos-tile{background:#293229;border-color:#394339;color:#edf1e9}
+body.dark-mode .pos-line{border-color:#394339}
+body.dark-mode .pos-qty button,body.dark-mode .pos-pay button,body.dark-mode .pos-actions button,body.dark-mode .pos-btn,body.dark-mode .pos-field,body.dark-mode .pos-prices input{background:#293229;border-color:#4a554a;color:#edf1e9}
+body.dark-mode .pos-pay .on{background:#3a4a2a;border-color:#8fa561;color:#eef5d9}
+body.dark-mode .pos-actions .pos-primary{background:#5a6d38;border-color:#5a6d38;color:#fff}
+body.dark-mode .pos-doc hr{border-color:#394339}
+body.dark-mode .pos-card input::placeholder,body.dark-mode .pos-dialog input::placeholder{color:#8a948a}
+@media print{body.dark-mode #posDocDialog,body.dark-mode #posDocDialog *{background:#fff!important;color:#000!important}}
+
+/* ===== Lucro e preço por unidade ===== */
+.pos-wide{grid-column:1/-1}
+.pr-table{display:grid;gap:6px}
+.pr-row{display:grid;grid-template-columns:minmax(0,1fr) 100px 100px 64px;gap:8px;align-items:center;font-size:13px}
+.pr-table.no-cost .pr-row{grid-template-columns:minmax(0,1fr) 120px}
+.pr-head{font-size:12px;font-weight:600;color:#4a5145}.pr-margin{text-align:right}
+.pr-row input{box-sizing:border-box;width:100%;height:40px;border:1px solid #aeb5a0;border-radius:10px;padding:0 8px;font:inherit;color:#1f2419;background:#fff}
+.profit-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
+.profit-card{gap:8px}.profit-big{font-size:26px;line-height:1.1}
+.profit-big.pos,.profit-table td.pos{color:#24503c}.profit-big.neg,.profit-table td.neg{color:#8a2a2a}
+.profit-note{margin:10px 0 0}.profit-scroll{overflow-x:auto}
+.profit-table{width:100%;border-collapse:collapse;font-size:13px;min-width:460px}
+.profit-table th,.profit-table td{padding:8px 6px;text-align:right;border-bottom:1px solid #eef0e6}
+.profit-table th:first-child,.profit-table td:first-child{text-align:left}
+@media(max-width:560px){.pr-row{grid-template-columns:minmax(0,1fr) 84px 84px}.pr-margin{display:none}}
+body.dark-mode .pr-row input{background:#293229;border-color:#4a554a;color:#edf1e9}
+body.dark-mode .pr-head{color:#b6c0b3}
+body.dark-mode .profit-big.pos,body.dark-mode .profit-table td.pos{color:#9fd0b5}
+body.dark-mode .profit-big.neg,body.dark-mode .profit-table td.neg{color:#f0a3a3}
+body.dark-mode .profit-table th,body.dark-mode .profit-table td{border-color:#394339;color:#edf1e9}
+body.dark-mode .profit-card .pos-total span:last-child{color:#edf1e9}
