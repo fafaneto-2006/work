@@ -1,4 +1,4 @@
-const CACHE_NAME = 'stock-loja-v18';
+const CACHE_NAME = 'stock-loja-v19';
 const APP_FILES = ['./', './index.html', './styles.css', './sold-button.css', './platform-install.css', './auth.css', './auth.js', './supabase-config.js', './app.js', './pos.js', './pos.css', './profit.js', './tabs.js', './assistant.js', './assistant.css', './tabs.css', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', event => {
