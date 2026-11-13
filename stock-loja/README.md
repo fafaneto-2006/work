@@ -49,7 +49,7 @@ O app é uma PWA: instala-se pelo navegador nos dois sistemas e guarda os dados 
 
 ## Supabase: configurar a primeira conta de administrador
 
-O projeto Supabase **stock-loja** está criado na organização conectada. O app usa `https://ubkngdqwqhbutslvndrq.supabase.co`; a chave publicável fica em `supabase-config.js`. O banco contém `profiles`, `products` e `stock_movements`, com RLS ativo. Contas novas começam como utilizadores pendentes; o formulário de registo nunca permite escolher o perfil de administrador.
+O projeto Supabase **stock-loja** usa `https://eusfoihfcsogoqxripbz.supabase.co`; a chave publicável fica em `supabase-config.js`. Aplique o esquema e as migrações deste repositório antes de usar login, inventário partilhado, Caixa, Lucro ou Assistente. Contas novas começam como utilizadores pendentes; o formulário de registo nunca permite escolher o perfil de administrador.
 
 1. Crie uma conta no app com o seu e-mail e confirme a mensagem de verificação, se for solicitada.
 2. No painel Supabase do projeto, abra **SQL Editor** e execute o comando abaixo, substituindo o e-mail pelo usado no registo:
